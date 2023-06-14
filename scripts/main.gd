@@ -20,6 +20,8 @@ var edge_width := vertex_size / 2.0
 @export var vertex_color := Color.RED
 @export var edge_color := Color.BLUE
 
+@export var show_grid_points := true
+
 
 # Node paths
 
@@ -117,7 +119,7 @@ func _ready() -> void:
 					var vertex := Vector4(position.x, position.y, position.z, false)
 					vertices.append(vertex)
 	# Draw grid points and vertices
-	var grid_points_count := len(grid_points)
+	var grid_points_count := len(grid_points) if show_grid_points else 0
 	multimesh.set_instance_count(grid_points_count + len(vertices))
 	# Draw grid points
 	var scale := Vector3.ONE * grid_point_size
