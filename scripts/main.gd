@@ -22,11 +22,14 @@ var edge_color := Color.BLUE
 
 @export var show_grid_points := true
 
+var scroll_step := cell_size / 5.0
+
 
 # Node paths
 
 @onready var node3d := $Node3D
-@onready var camera := $Node3D/Camera3D
+@onready var camera_orbit_center := $Node3D/CameraOrbitCenter
+@onready var camera := $Node3D/CameraOrbitCenter/Camera3D
 @onready var multimesh : MultiMesh = $Node3D/MultiMesh.get_multimesh()
 @onready var edge_multimesh: MultiMesh = $Node3D/EdgeMultiMesh.get_multimesh()
 
@@ -189,7 +192,15 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var rel := (event as InputEventMouseMotion).relative
-			camera.position += Vector3(-rel.x, rel.y, 0.0) * mouse_sensitivity
+			var rotation_delta := Vector3(-rel.y, -rel.x, 0.0)
+			camera_orbit_center.rotation += rotation_delta * mouse_sensitivity
+	if event is InputEventMouseButton:
+		if event.is_pressed():
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				camera.position.z -= scroll_step
+			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				camera.position.z += scroll_step
+
 
 func get_grid_point(x: int, y: int, z: int) -> Vector4:
 	return grid_points[x * grid_resolution ** 2 + y * grid_resolution + z]
