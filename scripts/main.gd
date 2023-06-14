@@ -1,23 +1,26 @@
 extends Node
 
-var bounding_box_size := 2.0
+@export var bounding_box_size := 2.5
 var bb_extent := bounding_box_size / 2.0
 
-var cell_resolution := 7
+@export var cell_resolution := 5
 var grid_resolution := cell_resolution + 1
 var cell_size := bounding_box_size / grid_resolution
 var cell_offset := cell_size / 2.0
 
-var grid_point_size := cell_size / 5.0
-var vertex_size := cell_size / 5.0
+@export var grid_point_size := cell_size / 5.0
+@export var vertex_size := cell_size / 5.0
+var edge_width := vertex_size / 2.0
 
 
 @onready var node3d := $Node3D
-@onready var multimesh : MultiMesh = $Node3D/MultiMeshInstance3D.get_multimesh()
+@onready var multimesh : MultiMesh = $Node3D/MultiMesh.get_multimesh()
+@onready var edge_multimesh: MultiMesh = $Node3D/EdgeMultiMesh.get_multimesh()
 
 
 var grid_points := []
 var vertices := []
+var edges := []
 
 
 # Called when the node enters the scene tree for the first time.
@@ -57,7 +60,49 @@ func _ready() -> void:
 				if not inside and not outside:
 					# Create vertex
 					var position := get_vertex_position_3i(x, y ,z)
-					vertices.append(position)
+					var vertex := Vector4(position.x, position.y, position.z, true)
+					vertices.append(vertex)
+					# Get edges of cell with sign change
+					var cell_grid_edges := [
+						sign(cell_grid_points[0].w) + sign(cell_grid_points[1].w) == 0.0,
+						sign(cell_grid_points[1].w) + sign(cell_grid_points[3].w) == 0.0,
+						sign(cell_grid_points[3].w) + sign(cell_grid_points[2].w) == 0.0,
+						sign(cell_grid_points[2].w) + sign(cell_grid_points[0].w) == 0.0,
+						sign(cell_grid_points[4].w) + sign(cell_grid_points[5].w) == 0.0,
+						sign(cell_grid_points[5].w) + sign(cell_grid_points[7].w) == 0.0,
+						sign(cell_grid_points[7].w) + sign(cell_grid_points[6].w) == 0.0,
+						sign(cell_grid_points[6].w) + sign(cell_grid_points[4].w) == 0.0,
+						sign(cell_grid_points[0].w) + sign(cell_grid_points[4].w) == 0.0,
+						sign(cell_grid_points[1].w) + sign(cell_grid_points[5].w) == 0.0,
+						sign(cell_grid_points[3].w) + sign(cell_grid_points[7].w) == 0.0,
+						sign(cell_grid_points[2].w) + sign(cell_grid_points[6].w) == 0.0,
+					]
+					for i in len(cell_grid_edges):
+						if cell_grid_edges[i]:
+							match i:
+								0:
+									edges.append([Vector3i(x, y, z), Vector3i(x, y, z-1)])
+									edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z)])
+									edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z-1)])
+									edges.append([Vector3i(x, y, z-1), Vector3i(x, y-1, z-1)])
+									edges.append([Vector3i(x, y-1, z), Vector3i(x, y-1, z-1)])
+								3:
+									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z)])
+									edges.append([Vector3i(x, y, z), Vector3i(x, y, z-1)])
+									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z-1)])
+									edges.append([Vector3i(x, y, z-1), Vector3i(x-1, y, z-1)])
+									edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y, z-1)])
+								8:
+									edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z)])
+									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z)])
+									edges.append([Vector3i(x, y, z), Vector3i(x-1, y-1, z)])
+									edges.append([Vector3i(x, y-1, z), Vector3i(x-1, y-1, z)])
+									edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y-1, z)])
+				else:
+					# Create hidden vertex
+					var position := get_vertex_position_3i(x, y ,z)
+					var vertex := Vector4(position.x, position.y, position.z, false)
+					vertices.append(vertex)
 	# Draw grid points and vertices
 	multimesh.set_instance_count(len(grid_points) + len(vertices))
 	# Draw grid points
@@ -74,9 +119,46 @@ func _ready() -> void:
 	scale = Vector3.ONE * vertex_size
 	transform = Transform3D().scaled(scale)
 	for instance in range(len(grid_points), len(grid_points) + len(vertices)):
-		var vertex : Vector3 = vertices[instance - len(grid_points)]
-		multimesh.set_instance_transform(instance, transform.translated(vertex))
-		multimesh.set_instance_color(instance, Color.RED)
+		var vertex : Vector4 = vertices[instance - len(grid_points)]
+		var position := Vector3(vertex.x, vertex.y, vertex.z)
+		multimesh.set_instance_transform(instance, transform.translated(position))
+		var color := Color.RED if vertex.w else Color.TRANSPARENT
+		multimesh.set_instance_color(instance, color)
+	# Draw edges
+	edge_multimesh.set_instance_count(len(edges))
+	var edge_mesh : CylinderMesh = edge_multimesh.get_mesh()
+	edge_mesh.set_top_radius(edge_width / 2.0)
+	edge_mesh.set_bottom_radius(edge_width / 2.0)
+	transform = Transform3D().translated(Vector3.UP * 0.5)
+	for instance in len(edges):
+		# Get edge
+		var edge : Array = edges[instance]
+		# Get starting and ending vertices of edge
+		var start = vertices[get_vertex_index_3dvi(edge[0])]
+		var end = vertices[get_vertex_index_3dvi(edge[1])]
+		start = Vector3(start.x, start.y, start.z)
+		end = Vector3(end.x, end.y, end.z)
+		# Get distance and direction from start to end
+		var dir : Vector3 = end - start
+		var dist : float = dir.length()
+		# Scale edge length by distance
+		var edge_transform := transform.scaled(Vector3(1.0, dist, 1.0))
+		# Rotate mesh to align with direction
+		var axis := Vector3.UP.cross(dir).normalized()
+		var angle := Vector3.UP.angle_to(dir)
+		# Handle edge case when direction is negative of UP vector
+		if axis.is_normalized():
+			edge_transform = edge_transform.rotated(axis, angle)
+		else:
+			edge_transform = edge_transform.scaled(Vector3(1.0, -1.0, 1.0))
+		# Translate start of edge to start point
+		edge_transform = edge_transform.translated(start)
+		# If edge is invalid, scale by ZERO to hide it
+		if dist > cell_size * 2.0:
+			edge_transform = transform.scaled(Vector3.ZERO)
+		# Apply transformation
+		edge_multimesh.set_instance_transform(instance, edge_transform)
+		edge_multimesh.set_instance_color(instance, Color.BLUE)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -86,6 +168,14 @@ func _process(_delta) -> void:
 
 func get_grid_point(x: int, y: int, z: int) -> Vector4:
 	return grid_points[x * grid_resolution ** 2 + y * grid_resolution + z]
+
+
+func get_vertex_index(x: int, y: int, z: int) -> int:
+	return x * cell_resolution ** 2 + y * cell_resolution + z
+
+
+func get_vertex_index_3dvi(v: Vector3i) -> int:
+	return get_vertex_index(v.x, v.y, v.z)
 
 
 func get_grid_point_position_3i(x: int, y: int, z: int) -> Vector3:
