@@ -12,23 +12,33 @@ var grid_point_size := cell_size / 5.0
 @onready var multimesh : MultiMesh = $Node3D/MultiMeshInstance3D.get_multimesh()
 
 
+var grid_points := []
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Create grid points
 	var bb_extent := bounding_box_size / 2.0
-	multimesh.set_instance_count(cell_resolution ** 3)
-	var instance_idx := 0
 	var bounds := Vector3(-bb_extent + cell_offset, bb_extent + cell_offset, cell_size)
 	for x in bounds:
 		for y in bounds:
 			for z in bounds:
-				var scale := Vector3.ONE * grid_point_size
 				var position := Vector3(x, y, z)
-				var transform := Transform3D().scaled(scale).translated(position)
-				multimesh.set_instance_transform(instance_idx, transform)
-				var color := get_noise_color_3dv(position)
-				multimesh.set_instance_color(instance_idx, color)
-				instance_idx += 1
+				var value := get_noise_3dv(position)
+				var grid_point := Vector4(x, y, z, value)
+				grid_points.append(grid_point)
+	# Draw grid points
+	var scale := Vector3.ONE * grid_point_size
+	var transform := Transform3D().scaled(scale)
+	multimesh.set_instance_count(len(grid_points))
+	for instance in len(grid_points):
+		var grid_point : Vector4 = grid_points[instance]
+		var position := Vector3(grid_point.x, grid_point.y, grid_point.z)
+		var value : float = grid_point.w
+		multimesh.set_instance_transform(instance, transform.translated(position))
+		var color := get_noise_color_f(value)
+		multimesh.set_instance_color(instance, color)
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta) -> void:
@@ -43,9 +53,12 @@ func get_noise_3dv(v: Vector3) -> float:
 		return 1.0
 
 
-func get_noise_color_3dv(v: Vector3) -> Color:
-	var value := get_noise_3dv(v)
-	if value >= 0.0:
+func get_noise_color_f(f: float) -> Color:
+	if f >= 0.0:
 		return Color.WHITE
 	else:
 		return Color.BLACK
+
+
+func get_noise_color_3dv(v: Vector3) -> Color:
+	return get_noise_color_f(get_noise_3dv(v))
