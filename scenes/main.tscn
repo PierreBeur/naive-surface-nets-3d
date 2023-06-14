@@ -23,6 +23,8 @@ material = SubResource("StandardMaterial3D_a8112")
 height = 1.0
 radial_segments = 4
 rings = 1
+cap_top = false
+cap_bottom = false
 
 [sub_resource type="MultiMesh" id="MultiMesh_ugu1x"]
 transform_format = 1
@@ -40,8 +42,10 @@ multimesh = SubResource("MultiMesh_7g2ac")
 [node name="EdgeMultiMesh" type="MultiMeshInstance3D" parent="Node3D"]
 multimesh = SubResource("MultiMesh_ugu1x")
 
-[node name="Camera3D" type="Camera3D" parent="Node3D"]
+[node name="CameraOrbitCenter" type="Node3D" parent="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="Node3D/CameraOrbitCenter"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Node3D/Camera3D"]
+[node name="OmniLight3D" type="OmniLight3D" parent="Node3D/CameraOrbitCenter/Camera3D"]
 omni_range = 10.0
