@@ -17,6 +17,9 @@ var grid_point_size := cell_size / 5.0
 var vertex_size := cell_size / 5.0
 var edge_width := vertex_size / 2.0
 
+@export var vertex_color := Color.RED
+@export var edge_color := Color.BLUE
+
 
 # Node paths
 
@@ -131,9 +134,12 @@ func _ready() -> void:
 	for instance in range(len(grid_points), len(grid_points) + len(vertices)):
 		var vertex : Vector4 = vertices[instance - len(grid_points)]
 		var position := Vector3(vertex.x, vertex.y, vertex.z)
-		multimesh.set_instance_transform(instance, transform.translated(position))
-		var color := Color.RED if vertex.w else Color.TRANSPARENT
-		multimesh.set_instance_color(instance, color)
+		var vertex_transform := transform.translated(position)
+		# If vertex is hidden, scale by ZERO to hide it
+		if not vertex.w:
+			vertex_transform = Transform3D().scaled(Vector3.ZERO)
+		multimesh.set_instance_transform(instance, vertex_transform)
+		multimesh.set_instance_color(instance, vertex_color)
 	# Draw edges
 	edge_multimesh.set_instance_count(len(edges))
 	var edge_mesh : CylinderMesh = edge_multimesh.get_mesh()
@@ -168,7 +174,7 @@ func _ready() -> void:
 			edge_transform = transform.scaled(Vector3.ZERO)
 		# Apply transformation
 		edge_multimesh.set_instance_transform(instance, edge_transform)
-		edge_multimesh.set_instance_color(instance, Color.BLUE)
+		edge_multimesh.set_instance_color(instance, edge_color)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
