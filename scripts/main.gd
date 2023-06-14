@@ -5,10 +5,10 @@ extends Node
 
 @export var mouse_sensitivity := 0.002
 
-@export var bounding_box_size := 2.5
+var bounding_box_size := 2.5
 var bb_extent := bounding_box_size / 2.0
 
-@export var cell_resolution := 5
+var cell_resolution := 7
 var grid_resolution := cell_resolution + 1
 var cell_size := bounding_box_size / grid_resolution
 var cell_offset := cell_size / 2.0
@@ -17,8 +17,8 @@ var grid_point_size := cell_size / 5.0
 var vertex_size := cell_size / 5.0
 var edge_width := vertex_size / 2.0
 
-@export var vertex_color := Color.RED
-@export var edge_color := Color.BLUE
+var vertex_color := Color.RED
+var edge_color := Color.BLUE
 
 @export var show_grid_points := true
 
