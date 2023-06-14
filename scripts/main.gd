@@ -2,8 +2,10 @@ extends Node
 
 var bounding_box_size := 2.0
 var bb_extent := bounding_box_size / 2.0
-var cell_resolution := 10
-var cell_size := bounding_box_size / cell_resolution
+
+var cell_resolution := 7
+var grid_resolution := cell_resolution + 1
+var cell_size := bounding_box_size / grid_resolution
 var cell_offset := cell_size / 2.0
 
 var grid_point_size := cell_size / 5.0
@@ -21,17 +23,17 @@ var vertices := []
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Create grid points
-	for x in cell_resolution:
-		for y in cell_resolution:
-			for z in cell_resolution:
+	for x in grid_resolution:
+		for y in grid_resolution:
+			for z in grid_resolution:
 				var position := get_grid_point_position_3i(x, y, z)
 				var value := get_noise_3dv(position)
 				var grid_point := Vector4(position.x, position.y, position.z, value)
 				grid_points.append(grid_point)
 	# Create vertices
-	for x in cell_resolution - 1:
-		for y in cell_resolution - 1:
-			for z in cell_resolution - 1:
+	for x in cell_resolution:
+		for y in cell_resolution:
+			for z in cell_resolution:
 				# Check that vertex is within cell with sign change
 				# Get grid points of cell
 				var cell_grid_points := [
@@ -83,7 +85,7 @@ func _process(_delta) -> void:
 
 
 func get_grid_point(x: int, y: int, z: int) -> Vector4:
-	return grid_points[x * cell_resolution ** 2 + y * cell_resolution + z]
+	return grid_points[x * grid_resolution ** 2 + y * grid_resolution + z]
 
 
 func get_grid_point_position_3i(x: int, y: int, z: int) -> Vector3:
