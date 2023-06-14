@@ -169,7 +169,7 @@ func _ready() -> void:
 		if axis.is_normalized():
 			edge_transform = edge_transform.rotated(axis, angle)
 		else:
-			edge_transform = edge_transform.scaled(Vector3(1.0, -1.0, 1.0))
+			edge_transform = edge_transform.rotated(Vector3.LEFT, PI)
 		# Translate start of edge to start point
 		edge_transform = edge_transform.translated(start)
 		# If edge is invalid, scale by ZERO to hide it
