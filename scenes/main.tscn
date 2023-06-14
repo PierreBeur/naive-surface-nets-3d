@@ -1,6 +1,24 @@
-[gd_scene load_steps=2 format=3 uid="uid://cbpry3pgsgbev"]
+[gd_scene load_steps=5 format=3 uid="uid://cbpry3pgsgbev"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_8eop0"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_elsbx"]
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_2jbx8"]
+material = SubResource("StandardMaterial3D_elsbx")
+radial_segments = 6
+rings = 3
+
+[sub_resource type="MultiMesh" id="MultiMesh_7g2ac"]
+transform_format = 1
+use_colors = true
+mesh = SubResource("SphereMesh_2jbx8")
+
 [node name="Main" type="Node"]
 script = ExtResource("1_8eop0")
+
+[node name="Node3D" type="Node3D" parent="."]
+
+[node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="Node3D"]
+multimesh = SubResource("MultiMesh_7g2ac")
