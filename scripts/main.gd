@@ -3,6 +3,7 @@ extends Node
 var bounding_box_size := 2.0
 var cell_resolution := 20
 var cell_size := bounding_box_size / cell_resolution
+var cell_offset := cell_size / 2.0
 
 var grid_point_size := cell_size / 5.0
 
@@ -17,9 +18,10 @@ func _ready() -> void:
 	var bb_extent := bounding_box_size / 2.0
 	multimesh.set_instance_count(cell_resolution ** 3)
 	var instance_idx := 0
-	for x in Vector3(-bb_extent, bb_extent, cell_size):
-		for y in Vector3(-bb_extent, bb_extent, cell_size):
-			for z in Vector3(-bb_extent, bb_extent, cell_size):
+	var bounds := Vector3(-bb_extent + cell_offset, bb_extent + cell_offset, cell_size)
+	for x in bounds:
+		for y in bounds:
+			for z in bounds:
 				var scale := Vector3.ONE * grid_point_size
 				var position := Vector3(x, y, z)
 				var transform := Transform3D().scaled(scale).translated(position)
