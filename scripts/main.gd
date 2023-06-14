@@ -13,8 +13,8 @@ var grid_resolution := cell_resolution + 1
 var cell_size := bounding_box_size / grid_resolution
 var cell_offset := cell_size / 2.0
 
-@export var grid_point_size := cell_size / 5.0
-@export var vertex_size := cell_size / 5.0
+var grid_point_size := cell_size / 5.0
+var vertex_size := cell_size / 5.0
 var edge_width := vertex_size / 2.0
 
 
