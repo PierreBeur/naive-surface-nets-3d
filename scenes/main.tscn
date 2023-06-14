@@ -39,3 +39,6 @@ multimesh = SubResource("MultiMesh_7g2ac")
 
 [node name="EdgeMultiMesh" type="MultiMeshInstance3D" parent="Node3D"]
 multimesh = SubResource("MultiMesh_ugu1x")
+
+[node name="Camera3D" type="Camera3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
