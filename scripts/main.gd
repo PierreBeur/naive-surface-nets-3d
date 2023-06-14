@@ -117,11 +117,12 @@ func _ready() -> void:
 					var vertex := Vector4(position.x, position.y, position.z, false)
 					vertices.append(vertex)
 	# Draw grid points and vertices
-	multimesh.set_instance_count(len(grid_points) + len(vertices))
+	var grid_points_count := len(grid_points)
+	multimesh.set_instance_count(grid_points_count + len(vertices))
 	# Draw grid points
 	var scale := Vector3.ONE * grid_point_size
 	var transform := Transform3D().scaled(scale)
-	for instance in len(grid_points):
+	for instance in grid_points_count:
 		var grid_point : Vector4 = grid_points[instance]
 		var position := Vector3(grid_point.x, grid_point.y, grid_point.z)
 		var value : float = grid_point.w
@@ -131,8 +132,8 @@ func _ready() -> void:
 	# Draw vertices
 	scale = Vector3.ONE * vertex_size
 	transform = Transform3D().scaled(scale)
-	for instance in range(len(grid_points), len(grid_points) + len(vertices)):
-		var vertex : Vector4 = vertices[instance - len(grid_points)]
+	for instance in range(grid_points_count, grid_points_count + len(vertices)):
+		var vertex : Vector4 = vertices[instance - grid_points_count]
 		var position := Vector3(vertex.x, vertex.y, vertex.z)
 		var vertex_transform := transform.translated(position)
 		# If vertex is hidden, scale by ZERO to hide it
