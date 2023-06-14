@@ -34,7 +34,6 @@ func _ready() -> void:
 	for x in cell_resolution:
 		for y in cell_resolution:
 			for z in cell_resolution:
-				# Check that vertex is within cell with sign change
 				# Get grid points of cell
 				var cell_grid_points := [
 					get_grid_point(x,   y,   z  ),
@@ -54,6 +53,7 @@ func _ready() -> void:
 						inside = false
 					if grid_point.w <= 0.0:
 						outside = false
+				# If vertex is within cell with sign change
 				if not inside and not outside:
 					# Create vertex
 					var position := get_vertex_position_3i(x, y ,z)
