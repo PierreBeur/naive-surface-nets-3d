@@ -3,7 +3,7 @@ extends Node
 
 # Properties
 
-@export var mouse_sensitivity := 0.001
+@export var mouse_sensitivity := 0.002
 
 @export var bounding_box_size := 2.5
 var bb_extent := bounding_box_size / 2.0
