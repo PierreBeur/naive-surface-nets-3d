@@ -1,5 +1,10 @@
 extends Node
 
+
+# Properties
+
+@export var mouse_sensitivity := 0.001
+
 @export var bounding_box_size := 2.5
 var bb_extent := bounding_box_size / 2.0
 
@@ -13,10 +18,15 @@ var cell_offset := cell_size / 2.0
 var edge_width := vertex_size / 2.0
 
 
+# Node paths
+
 @onready var node3d := $Node3D
+@onready var camera := $Node3D/Camera3D
 @onready var multimesh : MultiMesh = $Node3D/MultiMesh.get_multimesh()
 @onready var edge_multimesh: MultiMesh = $Node3D/EdgeMultiMesh.get_multimesh()
 
+
+# Variables
 
 var grid_points := []
 var vertices := []
@@ -165,6 +175,12 @@ func _ready() -> void:
 func _process(_delta) -> void:
 	pass
 
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			var rel := (event as InputEventMouseMotion).relative
+			camera.position += Vector3(-rel.x, rel.y, 0.0) * mouse_sensitivity
 
 func get_grid_point(x: int, y: int, z: int) -> Vector4:
 	return grid_points[x * grid_resolution ** 2 + y * grid_resolution + z]
