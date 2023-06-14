@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://cbpry3pgsgbev"]
+[gd_scene load_steps=8 format=3 uid="uid://cbpry3pgsgbev"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_8eop0"]
 
@@ -15,10 +15,27 @@ transform_format = 1
 use_colors = true
 mesh = SubResource("SphereMesh_2jbx8")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a8112"]
+vertex_color_use_as_albedo = true
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mf4hu"]
+material = SubResource("StandardMaterial3D_a8112")
+height = 1.0
+radial_segments = 4
+rings = 1
+
+[sub_resource type="MultiMesh" id="MultiMesh_ugu1x"]
+transform_format = 1
+use_colors = true
+mesh = SubResource("CylinderMesh_mf4hu")
+
 [node name="Main" type="Node"]
 script = ExtResource("1_8eop0")
 
 [node name="Node3D" type="Node3D" parent="."]
 
-[node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="Node3D"]
+[node name="MultiMesh" type="MultiMeshInstance3D" parent="Node3D"]
 multimesh = SubResource("MultiMesh_7g2ac")
+
+[node name="EdgeMultiMesh" type="MultiMeshInstance3D" parent="Node3D"]
+multimesh = SubResource("MultiMesh_ugu1x")
