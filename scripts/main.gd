@@ -23,8 +23,18 @@ var edge_color := Color.BLUE
 var show_grid_points := true
 var show_vertices := true
 var show_edges := true
+var interpolation := true
 
 var zoom_step := cell_size / 5.0
+
+
+# Constants
+
+const EDGE_INDICES := [
+	[0, 1], [1, 3], [3, 2], [2, 0],
+	[4, 5], [5, 7], [7, 6], [6, 4],
+	[0, 4], [1, 5], [3, 7], [2, 6]
+]
 
 
 # Node paths
@@ -72,6 +82,10 @@ func _input(event: InputEvent) -> void:
 		draw()
 	if event.is_action_pressed("toggle_show_edges"):
 		show_edges = !show_edges
+		draw()
+	if event.is_action_pressed("toggle_interpolation"):
+		interpolation = !interpolation
+		build()
 		draw()
 
 
@@ -215,7 +229,7 @@ func draw() -> void:
 		# Translate start of edge to start point
 		edge_transform = edge_transform.translated(start)
 		# If edge is invalid, scale by ZERO to hide it
-		if dist > cell_size * 2.0:
+		if dist > cell_size * 3.5:
 			edge_transform = transform.scaled(Vector3.ZERO)
 		# Apply transformation
 		edge_multimesh.set_instance_transform(instance, edge_transform)
@@ -261,3 +275,7 @@ func get_noise_color_f(f: float) -> Color:
 
 func get_noise_color_3dv(v: Vector3) -> Color:
 	return get_noise_color_f(get_noise_3dv(v))
+
+
+func v4_to_v3(v: Vector4) -> Vector3:
+	return Vector3(v.x, v.y, v.z)
