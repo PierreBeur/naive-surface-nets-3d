@@ -154,8 +154,30 @@ func build() -> void:
 									edges.append([Vector3i(x, y, z), Vector3i(x-1, y-1, z)])
 									edges.append([Vector3i(x, y-1, z), Vector3i(x-1, y-1, z)])
 									edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y-1, z)])
-					# Create vertex
-					var position := get_vertex_position_3i(x, y ,z)
+					# Approximate position of zero value along edges with sign change
+					var cell_grid_edge_zeroes := []
+					for edge_index in EDGE_INDICES:
+						var value_a : float = cell_grid_points[edge_index[0]].w
+						var value_b : float = cell_grid_points[edge_index[1]].w
+						cell_grid_edge_zeroes.append(value_a / (value_a - value_b))
+					var cell_grid_edge_zero_positions := []
+					for i in 12:
+						var cell_grid_edge_zero : float = cell_grid_edge_zeroes[i]
+						if 0.0 <= cell_grid_edge_zero and cell_grid_edge_zero <= 1.0:
+							var edge_index_a : int = EDGE_INDICES[i][0]
+							var edge_index_b : int = EDGE_INDICES[i][1]
+							var point_a := v4_to_v3(cell_grid_points[edge_index_a])
+							var point_b := v4_to_v3(cell_grid_points[edge_index_b])
+							var point := point_a.lerp(point_b, cell_grid_edge_zero)
+							cell_grid_edge_zero_positions.append(point)
+					# Average zero value positions
+					var position := Vector3.ZERO
+					for cell_grid_edge_zero_position in cell_grid_edge_zero_positions:
+						position += cell_grid_edge_zero_position
+					position /= len(cell_grid_edge_zero_positions)
+#					# Create vertex
+					if not interpolation:
+						position = get_vertex_position_3i(x, y ,z)
 					var vertex := Vector4(position.x, position.y, position.z, true)
 					vertices.append(vertex)
 				else:
