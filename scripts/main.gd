@@ -166,18 +166,15 @@ func draw() -> void:
 	var vertex_count := len(vertices) if show_vertices else 0
 	multimesh.set_instance_count(grid_point_count + vertex_count)
 	# Draw grid points
-	var scale := Vector3.ONE * grid_point_size
-	var transform := Transform3D().scaled(scale)
+	var transform := Transform3D().scaled(Vector3.ONE * grid_point_size)
 	for instance in grid_point_count:
 		var grid_point : Vector4 = grid_points[instance]
 		var position := Vector3(grid_point.x, grid_point.y, grid_point.z)
-		var value : float = grid_point.w
 		multimesh.set_instance_transform(instance, transform.translated(position))
-		var color := get_noise_color_f(value)
+		var color := get_noise_color_f(grid_point.w)
 		multimesh.set_instance_color(instance, color)
 	# Draw vertices
-	scale = Vector3.ONE * vertex_size
-	transform = Transform3D().scaled(scale)
+	transform = Transform3D().scaled(Vector3.ONE * vertex_size)
 	for instance in range(grid_point_count, grid_point_count + vertex_count):
 		var vertex : Vector4 = vertices[instance - grid_point_count]
 		var position := Vector3(vertex.x, vertex.y, vertex.z)
