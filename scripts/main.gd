@@ -8,7 +8,7 @@ extends Node
 var bounding_box_size := 2.5
 var bb_extent := bounding_box_size / 2.0
 
-var cell_resolution := 7
+var cell_resolution := 15
 var grid_resolution := cell_resolution + 1
 var cell_size := bounding_box_size / grid_resolution
 var cell_offset := cell_size / 2.0
@@ -21,6 +21,8 @@ var vertex_color := Color.RED
 var edge_color := Color.BLUE
 
 @export var show_grid_points := true
+@export var show_vertices := true
+@export var show_edges := true
 
 var scroll_step := cell_size / 5.0
 
@@ -123,7 +125,8 @@ func _ready() -> void:
 					vertices.append(vertex)
 	# Draw grid points and vertices
 	var grid_points_count := len(grid_points) if show_grid_points else 0
-	multimesh.set_instance_count(grid_points_count + len(vertices))
+	var vertices_count := len(vertices) if show_vertices else 0
+	multimesh.set_instance_count(grid_points_count + vertices_count)
 	# Draw grid points
 	var scale := Vector3.ONE * grid_point_size
 	var transform := Transform3D().scaled(scale)
@@ -137,7 +140,7 @@ func _ready() -> void:
 	# Draw vertices
 	scale = Vector3.ONE * vertex_size
 	transform = Transform3D().scaled(scale)
-	for instance in range(grid_points_count, grid_points_count + len(vertices)):
+	for instance in range(grid_points_count, grid_points_count + vertices_count):
 		var vertex : Vector4 = vertices[instance - grid_points_count]
 		var position := Vector3(vertex.x, vertex.y, vertex.z)
 		var vertex_transform := transform.translated(position)
@@ -147,12 +150,13 @@ func _ready() -> void:
 		multimesh.set_instance_transform(instance, vertex_transform)
 		multimesh.set_instance_color(instance, vertex_color)
 	# Draw edges
-	edge_multimesh.set_instance_count(len(edges))
+	var edges_count := len(edges) if show_edges else 0
+	edge_multimesh.set_instance_count(edges_count)
 	var edge_mesh : CylinderMesh = edge_multimesh.get_mesh()
 	edge_mesh.set_top_radius(edge_width / 2.0)
 	edge_mesh.set_bottom_radius(edge_width / 2.0)
 	transform = Transform3D().translated(Vector3.UP * 0.5)
-	for instance in len(edges):
+	for instance in edges_count:
 		# Get edge
 		var edge : Array = edges[instance]
 		# Get starting and ending vertices of edge
