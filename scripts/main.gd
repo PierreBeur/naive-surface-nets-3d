@@ -132,20 +132,11 @@ func build() -> void:
 					var vertex := Vector4(position.x, position.y, position.z, true)
 					vertices.append(vertex)
 					# Get edges of cell with sign change
-					var cell_grid_edges := [
-						sign(cell_grid_points[0].w) + sign(cell_grid_points[1].w) == 0.0,
-						sign(cell_grid_points[1].w) + sign(cell_grid_points[3].w) == 0.0,
-						sign(cell_grid_points[3].w) + sign(cell_grid_points[2].w) == 0.0,
-						sign(cell_grid_points[2].w) + sign(cell_grid_points[0].w) == 0.0,
-						sign(cell_grid_points[4].w) + sign(cell_grid_points[5].w) == 0.0,
-						sign(cell_grid_points[5].w) + sign(cell_grid_points[7].w) == 0.0,
-						sign(cell_grid_points[7].w) + sign(cell_grid_points[6].w) == 0.0,
-						sign(cell_grid_points[6].w) + sign(cell_grid_points[4].w) == 0.0,
-						sign(cell_grid_points[0].w) + sign(cell_grid_points[4].w) == 0.0,
-						sign(cell_grid_points[1].w) + sign(cell_grid_points[5].w) == 0.0,
-						sign(cell_grid_points[3].w) + sign(cell_grid_points[7].w) == 0.0,
-						sign(cell_grid_points[2].w) + sign(cell_grid_points[6].w) == 0.0,
-					]
+					var cell_grid_edges := []
+					for edge_index in EDGE_INDICES:
+						var sign_a := signf(cell_grid_points[edge_index[0]].w)
+						var sign_b := signf(cell_grid_points[edge_index[1]].w)
+						cell_grid_edges.append(sign_a + sign_b == 0.0)
 					for i in len(cell_grid_edges):
 						if cell_grid_edges[i]:
 							match i:
