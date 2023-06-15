@@ -20,11 +20,11 @@ var edge_width := vertex_size / 2.0
 var vertex_color := Color.RED
 var edge_color := Color.BLUE
 
-@export var show_grid_points := true
-@export var show_vertices := true
-@export var show_edges := true
+var show_grid_points := true
+var show_vertices := true
+var show_edges := true
 
-var scroll_step := cell_size / 5.0
+var zoom_step := cell_size / 5.0
 
 
 # Node paths
@@ -137,12 +137,19 @@ func _input(event: InputEvent) -> void:
 			var rel := (event as InputEventMouseMotion).relative
 			var rotation_delta := Vector3(-rel.y, -rel.x, 0.0)
 			camera_orbit_center.rotation += rotation_delta * mouse_sensitivity
-	if event is InputEventMouseButton:
-		if event.is_pressed():
-			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-				camera.position.z -= scroll_step
-			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-				camera.position.z += scroll_step
+	if event.is_action_pressed("zoom_in"):
+		camera.position.z -= zoom_step
+	if event.is_action_pressed("zoom_out"):
+		camera.position.z += zoom_step
+	if event.is_action_pressed("toggle_show_grid_points"):
+		show_grid_points = !show_grid_points
+		draw()
+	if event.is_action_pressed("toggle_show_vertices"):
+		show_vertices = !show_vertices
+		draw()
+	if event.is_action_pressed("toggle_show_edges"):
+		show_edges = !show_edges
+		draw()
 
 
 # Draws grid points, vertices, and edges
