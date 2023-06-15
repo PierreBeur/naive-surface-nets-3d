@@ -247,11 +247,8 @@ func get_vertex_position_3i(x: int, y: int, z: int) -> Vector3:
 
 
 func get_noise_3dv(v: Vector3) -> float:
-	# Unit sphere
-	if v.length() <= 1.0:
-		return -1.0
-	else:
-		return 1.0
+	# Unit sphere signed distance function
+	return v.length() - 1.0
 
 
 func get_noise_color_f(f: float) -> Color:
