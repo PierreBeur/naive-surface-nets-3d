@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cbpry3pgsgbev"]
+[gd_scene load_steps=9 format=3 uid="uid://cbpry3pgsgbev"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_8eop0"]
 
@@ -31,6 +31,12 @@ transform_format = 1
 use_colors = true
 mesh = SubResource("CylinderMesh_mf4hu")
 
+[sub_resource type="Environment" id="Environment_03t68"]
+background_mode = 1
+background_color = Color(0.5, 0.5, 0.5, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+
 [node name="Main" type="Node"]
 script = ExtResource("1_8eop0")
 
@@ -46,6 +52,4 @@ multimesh = SubResource("MultiMesh_ugu1x")
 
 [node name="Camera3D" type="Camera3D" parent="Node3D/CameraOrbitCenter"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
-
-[node name="OmniLight3D" type="OmniLight3D" parent="Node3D/CameraOrbitCenter/Camera3D"]
-omni_range = 10.0
+environment = SubResource("Environment_03t68")
