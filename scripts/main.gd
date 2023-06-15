@@ -259,10 +259,7 @@ func get_noise_3dv(v: Vector3) -> float:
 
 
 func get_noise_color_f(f: float) -> Color:
-	if f >= 0.0:
-		return Color.WHITE
-	else:
-		return Color.BLACK
+	return Color.WHITE if f > 0.0 else Color.BLACK
 
 
 func get_noise_color_3dv(v: Vector3) -> Color:
