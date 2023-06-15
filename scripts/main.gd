@@ -127,10 +127,6 @@ func build() -> void:
 						outside = false
 				# If vertex is within cell with sign change
 				if not inside and not outside:
-					# Create vertex
-					var position := get_vertex_position_3i(x, y ,z)
-					var vertex := Vector4(position.x, position.y, position.z, true)
-					vertices.append(vertex)
 					# Get edges of cell with sign change
 					var cell_grid_edges := []
 					for edge_index in EDGE_INDICES:
@@ -158,6 +154,10 @@ func build() -> void:
 									edges.append([Vector3i(x, y, z), Vector3i(x-1, y-1, z)])
 									edges.append([Vector3i(x, y-1, z), Vector3i(x-1, y-1, z)])
 									edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y-1, z)])
+					# Create vertex
+					var position := get_vertex_position_3i(x, y ,z)
+					var vertex := Vector4(position.x, position.y, position.z, true)
+					vertices.append(vertex)
 				else:
 					# Create hidden vertex
 					var position := get_vertex_position_3i(x, y ,z)
