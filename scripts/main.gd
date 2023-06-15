@@ -123,6 +123,30 @@ func _ready() -> void:
 					var position := get_vertex_position_3i(x, y ,z)
 					var vertex := Vector4(position.x, position.y, position.z, false)
 					vertices.append(vertex)
+	draw()
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta) -> void:
+	pass
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			var rel := (event as InputEventMouseMotion).relative
+			var rotation_delta := Vector3(-rel.y, -rel.x, 0.0)
+			camera_orbit_center.rotation += rotation_delta * mouse_sensitivity
+	if event is InputEventMouseButton:
+		if event.is_pressed():
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				camera.position.z -= scroll_step
+			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				camera.position.z += scroll_step
+
+
+# Draws grid points, vertices, and edges
+func draw() -> void:
 	# Draw grid points and vertices
 	var grid_point_count := len(grid_points) if show_grid_points else 0
 	var vertex_count := len(vertices) if show_vertices else 0
@@ -185,25 +209,6 @@ func _ready() -> void:
 		# Apply transformation
 		edge_multimesh.set_instance_transform(instance, edge_transform)
 		edge_multimesh.set_instance_color(instance, edge_color)
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta) -> void:
-	pass
-
-
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			var rel := (event as InputEventMouseMotion).relative
-			var rotation_delta := Vector3(-rel.y, -rel.x, 0.0)
-			camera_orbit_center.rotation += rotation_delta * mouse_sensitivity
-	if event is InputEventMouseButton:
-		if event.is_pressed():
-			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-				camera.position.z -= scroll_step
-			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-				camera.position.z += scroll_step
 
 
 func get_grid_point(x: int, y: int, z: int) -> Vector4:
