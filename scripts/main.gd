@@ -45,7 +45,40 @@ var edges := []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	build()
+	draw()
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta) -> void:
+	pass
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			var rel := (event as InputEventMouseMotion).relative
+			var rotation_delta := Vector3(-rel.y, -rel.x, 0.0)
+			camera_orbit_center.rotation += rotation_delta * mouse_sensitivity
+	if event.is_action_pressed("zoom_in"):
+		camera.position.z -= zoom_step
+	if event.is_action_pressed("zoom_out"):
+		camera.position.z += zoom_step
+	if event.is_action_pressed("toggle_show_grid_points"):
+		show_grid_points = !show_grid_points
+		draw()
+	if event.is_action_pressed("toggle_show_vertices"):
+		show_vertices = !show_vertices
+		draw()
+	if event.is_action_pressed("toggle_show_edges"):
+		show_edges = !show_edges
+		draw()
+
+
+# Builds grid points, vertices, and edges
+func build() -> void:
 	# Create grid points
+	grid_points.clear()
 	for x in grid_resolution:
 		for y in grid_resolution:
 			for z in grid_resolution:
@@ -53,7 +86,9 @@ func _ready() -> void:
 				var value := get_noise_3dv(position)
 				var grid_point := Vector4(position.x, position.y, position.z, value)
 				grid_points.append(grid_point)
-	# Create vertices
+	# Create vertices and edges
+	vertices.clear()
+	edges.clear()
 	for x in cell_resolution:
 		for y in cell_resolution:
 			for z in cell_resolution:
@@ -123,34 +158,6 @@ func _ready() -> void:
 					var position := get_vertex_position_3i(x, y ,z)
 					var vertex := Vector4(position.x, position.y, position.z, false)
 					vertices.append(vertex)
-	draw()
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta) -> void:
-	pass
-
-
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			var rel := (event as InputEventMouseMotion).relative
-			var rotation_delta := Vector3(-rel.y, -rel.x, 0.0)
-			camera_orbit_center.rotation += rotation_delta * mouse_sensitivity
-	if event.is_action_pressed("zoom_in"):
-		camera.position.z -= zoom_step
-	if event.is_action_pressed("zoom_out"):
-		camera.position.z += zoom_step
-	if event.is_action_pressed("toggle_show_grid_points"):
-		show_grid_points = !show_grid_points
-		draw()
-	if event.is_action_pressed("toggle_show_vertices"):
-		show_vertices = !show_vertices
-		draw()
-	if event.is_action_pressed("toggle_show_edges"):
-		show_edges = !show_edges
-		draw()
-
 
 # Draws grid points, vertices, and edges
 func draw() -> void:
