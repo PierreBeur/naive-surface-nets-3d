@@ -124,13 +124,13 @@ func _ready() -> void:
 					var vertex := Vector4(position.x, position.y, position.z, false)
 					vertices.append(vertex)
 	# Draw grid points and vertices
-	var grid_points_count := len(grid_points) if show_grid_points else 0
-	var vertices_count := len(vertices) if show_vertices else 0
-	multimesh.set_instance_count(grid_points_count + vertices_count)
+	var grid_point_count := len(grid_points) if show_grid_points else 0
+	var vertex_count := len(vertices) if show_vertices else 0
+	multimesh.set_instance_count(grid_point_count + vertex_count)
 	# Draw grid points
 	var scale := Vector3.ONE * grid_point_size
 	var transform := Transform3D().scaled(scale)
-	for instance in grid_points_count:
+	for instance in grid_point_count:
 		var grid_point : Vector4 = grid_points[instance]
 		var position := Vector3(grid_point.x, grid_point.y, grid_point.z)
 		var value : float = grid_point.w
@@ -140,8 +140,8 @@ func _ready() -> void:
 	# Draw vertices
 	scale = Vector3.ONE * vertex_size
 	transform = Transform3D().scaled(scale)
-	for instance in range(grid_points_count, grid_points_count + vertices_count):
-		var vertex : Vector4 = vertices[instance - grid_points_count]
+	for instance in range(grid_point_count, grid_point_count + vertex_count):
+		var vertex : Vector4 = vertices[instance - grid_point_count]
 		var position := Vector3(vertex.x, vertex.y, vertex.z)
 		var vertex_transform := transform.translated(position)
 		# If vertex is hidden, scale by ZERO to hide it
@@ -150,13 +150,13 @@ func _ready() -> void:
 		multimesh.set_instance_transform(instance, vertex_transform)
 		multimesh.set_instance_color(instance, vertex_color)
 	# Draw edges
-	var edges_count := len(edges) if show_edges else 0
-	edge_multimesh.set_instance_count(edges_count)
+	var edge_count := len(edges) if show_edges else 0
+	edge_multimesh.set_instance_count(edge_count)
 	var edge_mesh : CylinderMesh = edge_multimesh.get_mesh()
 	edge_mesh.set_top_radius(edge_width / 2.0)
 	edge_mesh.set_bottom_radius(edge_width / 2.0)
 	transform = Transform3D().translated(Vector3.UP * 0.5)
-	for instance in edges_count:
+	for instance in edge_count:
 		# Get edge
 		var edge : Array = edges[instance]
 		# Get starting and ending vertices of edge
