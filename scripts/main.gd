@@ -74,18 +74,21 @@ func _input(event: InputEvent) -> void:
 		camera.position.z -= zoom_step
 	if event.is_action_pressed("zoom_out"):
 		camera.position.z += zoom_step
+	var redraw := false
 	if event.is_action_pressed("toggle_show_grid_points"):
 		show_grid_points = !show_grid_points
-		draw()
+		redraw = true
 	if event.is_action_pressed("toggle_show_vertices"):
 		show_vertices = !show_vertices
-		draw()
+		redraw = true
 	if event.is_action_pressed("toggle_show_edges"):
 		show_edges = !show_edges
-		draw()
+		redraw = true
 	if event.is_action_pressed("toggle_interpolation"):
 		interpolation = !interpolation
 		build()
+		redraw = true
+	if redraw:
 		draw()
 
 
