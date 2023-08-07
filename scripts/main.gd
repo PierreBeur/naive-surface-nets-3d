@@ -107,6 +107,7 @@ func build() -> void:
 	# Create vertices and edges
 	vertices.clear()
 	edges.clear()
+	var mesh_quad_indices := []
 	for x in cell_resolution:
 		for y in cell_resolution:
 			for z in cell_resolution:
@@ -138,10 +139,10 @@ func build() -> void:
 						var value_b : float = cell_grid_points[edge_index[1]].w
 						var sign_a := signf(value_a)
 						var sign_b := signf(value_b)
-						cell_grid_edges.append(sign_a != sign_b)
+						cell_grid_edges.append([sign_a != sign_b, sign_a > sign_b])
 					for i in len(cell_grid_edges):
 						# If edge has sign change
-						if cell_grid_edges[i]:
+						if cell_grid_edges[i][0]:
 							match i:
 								0:
 									edges.append([Vector3i(x, y, z), Vector3i(x, y, z-1)])
@@ -149,18 +150,51 @@ func build() -> void:
 									edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z-1)])
 									edges.append([Vector3i(x, y, z-1), Vector3i(x, y-1, z-1)])
 									edges.append([Vector3i(x, y-1, z), Vector3i(x, y-1, z-1)])
+									var quad_indices := [
+										Vector3i(x, y, z),
+										Vector3i(x, y-1, z-1),
+										Vector3i(x, y-1, z),
+										Vector3i(x, y, z),
+										Vector3i(x, y, z-1),
+										Vector3i(x, y-1, z-1)
+									]
+									if cell_grid_edges[i][1]:
+										quad_indices.reverse()
+									mesh_quad_indices.append(quad_indices)
 								3:
 									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z)])
 									edges.append([Vector3i(x, y, z), Vector3i(x, y, z-1)])
 									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z-1)])
 									edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y, z-1)])
 									edges.append([Vector3i(x, y, z-1), Vector3i(x-1, y, z-1)])
+									var quad_indices := [
+										Vector3i(x, y, z),
+										Vector3i(x-1, y, z-1),
+										Vector3i(x, y, z-1),
+										Vector3i(x, y, z),
+										Vector3i(x-1, y, z),
+										Vector3i(x-1, y, z-1)
+									]
+									if not cell_grid_edges[i][1]:
+										quad_indices.reverse()
+									mesh_quad_indices.append(quad_indices)
 								8:
 									edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z)])
 									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z)])
 									edges.append([Vector3i(x, y, z), Vector3i(x-1, y-1, z)])
 									edges.append([Vector3i(x, y-1, z), Vector3i(x-1, y-1, z)])
 									edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y-1, z)])
+									var quad_indices := [
+										Vector3i(x, y, z),
+										Vector3i(x-1, y-1, z),
+										Vector3i(x-1, y, z),
+										Vector3i(x, y, z),
+										Vector3i(x, y-1, z),
+										Vector3i(x-1, y-1, z)
+									]
+									if cell_grid_edges[i][1]:
+										quad_indices.reverse()
+									mesh_quad_indices.append(quad_indices)
 					# Approximate position of zero value along edges with sign change
 					var cell_grid_edge_zeroes := []
 					for edge_index in EDGE_INDICES:
@@ -192,6 +226,18 @@ func build() -> void:
 					var position := get_vertex_position_3i(x, y ,z)
 					var vertex := Vector4(position.x, position.y, position.z, false)
 					vertices.append(vertex)
+	# Create mesh
+	var st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for quad_indices in mesh_quad_indices:
+		for index in quad_indices:
+			var vertex : Vector4 = vertices[get_vertex_index_3dvi(index)]
+			var position := v4_to_v3(vertex)
+			st.add_vertex(position)
+	st.index()
+	st.generate_normals()
+	mesh.set_mesh(st.commit())
+
 
 # Draws grid points, vertices, and edges
 func draw() -> void:
