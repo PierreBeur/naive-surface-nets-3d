@@ -130,7 +130,7 @@ func build() -> void:
 					if grid_point.w <= 0.0:
 						outside = false
 				# If vertex is within cell with sign change
-				if not inside and not outside:
+				if not (inside or outside):
 					# Get edges of cell with sign change
 					var cell_grid_edges := []
 					for edge_index in EDGE_INDICES:
