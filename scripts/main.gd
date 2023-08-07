@@ -138,7 +138,7 @@ func build() -> void:
 						var value_b : float = cell_grid_points[edge_index[1]].w
 						var sign_a := signf(value_a)
 						var sign_b := signf(value_b)
-						cell_grid_edges.append(sign_a + sign_b == 0.0)
+						cell_grid_edges.append(sign_a != sign_b)
 					for i in len(cell_grid_edges):
 						# If edge has sign change
 						if cell_grid_edges[i]:
