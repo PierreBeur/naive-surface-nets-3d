@@ -150,8 +150,8 @@ func build() -> void:
 									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z)])
 									edges.append([Vector3i(x, y, z), Vector3i(x, y, z-1)])
 									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z-1)])
-									edges.append([Vector3i(x, y, z-1), Vector3i(x-1, y, z-1)])
 									edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y, z-1)])
+									edges.append([Vector3i(x, y, z-1), Vector3i(x-1, y, z-1)])
 								8:
 									edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z)])
 									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z)])
