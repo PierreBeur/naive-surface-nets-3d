@@ -131,13 +131,14 @@ func build() -> void:
 						outside = false
 				# If vertex is within cell with sign change
 				if not (inside or outside):
-					# Get edges of cell with sign change
+					# Find which edges of cell have sign change
 					var cell_grid_edges := []
 					for edge_index in EDGE_INDICES:
 						var sign_a := signf(cell_grid_points[edge_index[0]].w)
 						var sign_b := signf(cell_grid_points[edge_index[1]].w)
 						cell_grid_edges.append(sign_a + sign_b == 0.0)
 					for i in len(cell_grid_edges):
+						# If edge has sign change
 						if cell_grid_edges[i]:
 							match i:
 								0:
