@@ -87,6 +87,8 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_show_edges"):
 		show_edges = !show_edges
 		redraw = true
+	if event.is_action_pressed("toggle_show_mesh"):
+		mesh.visible = !mesh.visible
 	if event.is_action_pressed("toggle_interpolation"):
 		interpolation = !interpolation
 		build()
