@@ -40,6 +40,7 @@ const EDGE_INDICES := [
 # Node paths
 
 @onready var node3d := $Node3D
+@onready var mesh := $Node3D/Mesh
 @onready var multimesh : MultiMesh = $Node3D/MultiMesh.get_multimesh()
 @onready var edge_multimesh: MultiMesh = $Node3D/EdgeMultiMesh.get_multimesh()
 @onready var camera_orbit_center := $Node3D/CameraOrbitCenter

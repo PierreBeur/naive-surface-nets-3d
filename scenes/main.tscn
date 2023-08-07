@@ -42,6 +42,8 @@ script = ExtResource("1_8eop0")
 
 [node name="Node3D" type="Node3D" parent="."]
 
+[node name="Mesh" type="MeshInstance3D" parent="Node3D"]
+
 [node name="MultiMesh" type="MultiMeshInstance3D" parent="Node3D"]
 multimesh = SubResource("MultiMesh_7g2ac")
 
