@@ -66,6 +66,7 @@ func _process(_delta) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# Camera movement
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var rel := (event as InputEventMouseMotion).relative
@@ -75,6 +76,7 @@ func _input(event: InputEvent) -> void:
 		camera.position.z -= zoom_step
 	if event.is_action_pressed("zoom_out"):
 		camera.position.z += zoom_step
+	# Generation controls
 	var redraw := false
 	if event.is_action_pressed("toggle_show_grid_points"):
 		show_grid_points = !show_grid_points
