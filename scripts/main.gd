@@ -24,6 +24,7 @@ var show_grid_points := true
 var show_vertices := true
 var show_edges := true
 var interpolation := true
+var show_normal_buffer := false
 
 var zoom_step := cell_size / 5.0
 
@@ -93,6 +94,9 @@ func _input(event: InputEvent) -> void:
 		interpolation = !interpolation
 		build()
 		redraw = true
+	if event.is_action_pressed("toggle_show_normal_buffer"):
+		show_normal_buffer = !show_normal_buffer
+		toggle_show_normal_buffer()
 	if redraw:
 		draw()
 
@@ -349,3 +353,8 @@ func get_noise_color_3dv(v: Vector3) -> Color:
 
 func v4_to_v3(v: Vector4) -> Vector3:
 	return Vector3(v.x, v.y, v.z)
+
+func toggle_show_normal_buffer():
+	var viewport := get_tree().root.get_viewport_rid()
+	var mode := 5 if show_normal_buffer else 0
+	RenderingServer.viewport_set_debug_draw(viewport, mode)
