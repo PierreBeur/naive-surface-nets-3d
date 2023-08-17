@@ -274,7 +274,7 @@ func draw() -> void:
 	# Draw edges
 	var edge_count := len(edges) if show_edges else 0
 	edge_multimesh.set_instance_count(edge_count)
-	var edge_mesh : CylinderMesh = edge_multimesh.get_mesh()
+	var edge_mesh := edge_multimesh.get_mesh() as CylinderMesh
 	edge_mesh.set_top_radius(edge_width / 2.0)
 	edge_mesh.set_bottom_radius(edge_width / 2.0)
 	var transform = Transform3D().translated(Vector3.UP * 0.5)
