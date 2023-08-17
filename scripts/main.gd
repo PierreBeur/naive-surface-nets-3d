@@ -77,6 +77,7 @@ func _ready() -> void:
 	noise.set_frequency(1.0)
 	build()
 	draw()
+	set_show_normal_buffer(show_normal_buffer)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -114,7 +115,7 @@ func _input(event: InputEvent) -> void:
 		redraw = true
 	if event.is_action_pressed("toggle_show_normal_buffer"):
 		show_normal_buffer = !show_normal_buffer
-		toggle_show_normal_buffer()
+		set_show_normal_buffer(show_normal_buffer)
 	if redraw:
 		draw()
 
@@ -399,7 +400,7 @@ func construct_hexagon_mesh(size: float) -> ArrayMesh:
 	return array_mesh
 
 
-func toggle_show_normal_buffer():
+func set_show_normal_buffer(visible: bool):
 	var viewport := get_tree().root.get_viewport_rid()
-	var mode := 5 if show_normal_buffer else 0
+	var mode := 5 if visible else 0
 	RenderingServer.viewport_set_debug_draw(viewport, mode)
