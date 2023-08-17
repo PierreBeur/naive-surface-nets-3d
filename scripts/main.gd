@@ -157,67 +157,67 @@ func build() -> void:
 				if not (inside or outside):
 					# Find which edges of cell have sign change
 					var cell_grid_edges := []
-					for edge_index in EDGE_INDICES:
-						var value_a : float = cell_grid_points[edge_index[0]].w
-						var value_b : float = cell_grid_points[edge_index[1]].w
+					for edge_index in [0, 3, 8]:
+						var edge : Array = EDGE_INDICES[edge_index]
+						var value_a : float = cell_grid_points[edge[0]].w
+						var value_b : float = cell_grid_points[edge[1]].w
 						var sign_a := signf(value_a)
 						var sign_b := signf(value_b)
 						cell_grid_edges.append([sign_a != sign_b, sign_a > sign_b])
-					for i in len(cell_grid_edges):
-						# If edge has sign change
-						if cell_grid_edges[i][0]:
-							match i:
-								0:
-									edges.append([Vector3i(x, y, z), Vector3i(x, y, z-1)])
-									edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z)])
-									edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z-1)])
-									edges.append([Vector3i(x, y, z-1), Vector3i(x, y-1, z-1)])
-									edges.append([Vector3i(x, y-1, z), Vector3i(x, y-1, z-1)])
-									var quad_indices := [
-										Vector3i(x, y, z),
-										Vector3i(x, y-1, z-1),
-										Vector3i(x, y-1, z),
-										Vector3i(x, y, z),
-										Vector3i(x, y, z-1),
-										Vector3i(x, y-1, z-1)
-									]
-									if cell_grid_edges[i][1]:
-										quad_indices.reverse()
-									mesh_quad_indices.append(quad_indices)
-								3:
-									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z)])
-									edges.append([Vector3i(x, y, z), Vector3i(x, y, z-1)])
-									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z-1)])
-									edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y, z-1)])
-									edges.append([Vector3i(x, y, z-1), Vector3i(x-1, y, z-1)])
-									var quad_indices := [
-										Vector3i(x, y, z),
-										Vector3i(x-1, y, z-1),
-										Vector3i(x, y, z-1),
-										Vector3i(x, y, z),
-										Vector3i(x-1, y, z),
-										Vector3i(x-1, y, z-1)
-									]
-									if not cell_grid_edges[i][1]:
-										quad_indices.reverse()
-									mesh_quad_indices.append(quad_indices)
-								8:
-									edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z)])
-									edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z)])
-									edges.append([Vector3i(x, y, z), Vector3i(x-1, y-1, z)])
-									edges.append([Vector3i(x, y-1, z), Vector3i(x-1, y-1, z)])
-									edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y-1, z)])
-									var quad_indices := [
-										Vector3i(x, y, z),
-										Vector3i(x-1, y-1, z),
-										Vector3i(x-1, y, z),
-										Vector3i(x, y, z),
-										Vector3i(x, y-1, z),
-										Vector3i(x-1, y-1, z)
-									]
-									if cell_grid_edges[i][1]:
-										quad_indices.reverse()
-									mesh_quad_indices.append(quad_indices)
+					# If edge 0 has sign change
+					if cell_grid_edges[0][0]:
+						edges.append([Vector3i(x, y, z), Vector3i(x, y, z-1)])
+						edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z)])
+						edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z-1)])
+						edges.append([Vector3i(x, y, z-1), Vector3i(x, y-1, z-1)])
+						edges.append([Vector3i(x, y-1, z), Vector3i(x, y-1, z-1)])
+						var quad_indices := [
+							Vector3i(x, y, z),
+							Vector3i(x, y-1, z-1),
+							Vector3i(x, y-1, z),
+							Vector3i(x, y, z),
+							Vector3i(x, y, z-1),
+							Vector3i(x, y-1, z-1)
+						]
+						if cell_grid_edges[0][1]:
+							quad_indices.reverse()
+						mesh_quad_indices.append(quad_indices)
+					# If edge 3 has sign change
+					if cell_grid_edges[1][0]:
+						edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z)])
+						edges.append([Vector3i(x, y, z), Vector3i(x, y, z-1)])
+						edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z-1)])
+						edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y, z-1)])
+						edges.append([Vector3i(x, y, z-1), Vector3i(x-1, y, z-1)])
+						var quad_indices := [
+							Vector3i(x, y, z),
+							Vector3i(x-1, y, z-1),
+							Vector3i(x, y, z-1),
+							Vector3i(x, y, z),
+							Vector3i(x-1, y, z),
+							Vector3i(x-1, y, z-1)
+						]
+						if not cell_grid_edges[1][1]:
+							quad_indices.reverse()
+						mesh_quad_indices.append(quad_indices)
+					# If edge 8 has sign change
+					if cell_grid_edges[2][0]:
+						edges.append([Vector3i(x, y, z), Vector3i(x, y-1, z)])
+						edges.append([Vector3i(x, y, z), Vector3i(x-1, y, z)])
+						edges.append([Vector3i(x, y, z), Vector3i(x-1, y-1, z)])
+						edges.append([Vector3i(x, y-1, z), Vector3i(x-1, y-1, z)])
+						edges.append([Vector3i(x-1, y, z), Vector3i(x-1, y-1, z)])
+						var quad_indices := [
+							Vector3i(x, y, z),
+							Vector3i(x-1, y-1, z),
+							Vector3i(x-1, y, z),
+							Vector3i(x, y, z),
+							Vector3i(x, y-1, z),
+							Vector3i(x-1, y-1, z)
+						]
+						if cell_grid_edges[2][1]:
+							quad_indices.reverse()
+						mesh_quad_indices.append(quad_indices)
 					# Approximate position of zero value along edges with sign change
 					var cell_grid_edge_zeroes := []
 					for edge_index in EDGE_INDICES:
