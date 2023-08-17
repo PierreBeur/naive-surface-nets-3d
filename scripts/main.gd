@@ -118,6 +118,7 @@ func _input(event: InputEvent) -> void:
 
 # Builds grid points, vertices, and edges
 func build() -> void:
+	var build_start_time = Time.get_ticks_msec()
 	# Create grid points
 	grid_points.clear()
 	for x in grid_resolution:
@@ -127,6 +128,7 @@ func build() -> void:
 				var value := get_noise_3dv(position)
 				var grid_point := Vector4(position.x, position.y, position.z, value)
 				grid_points.append(grid_point)
+	print("Create grid points time: " + str(Time.get_ticks_msec() - build_start_time) + "ms")
 	# Create vertices and edges
 	vertices.clear()
 	edges.clear()
@@ -250,6 +252,7 @@ func build() -> void:
 					var vertex := Vector4(position.x, position.y, position.z, false)
 					vertices.append(vertex)
 	# Create mesh
+	var start_time = Time.get_ticks_msec()
 	var st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for quad_indices in mesh_quad_indices:
@@ -260,10 +263,13 @@ func build() -> void:
 	st.index()
 	st.generate_normals()
 	mesh.set_mesh(st.commit())
+	print("Create mesh time: " + str(Time.get_ticks_msec() - start_time) + "ms")
+	print("Build time: " + str((Time.get_ticks_msec() - build_start_time) / 1000.0) + "s")
 
 
 # Draws grid points, vertices, and edges
 func draw() -> void:
+	var start_time = Time.get_ticks_usec()
 	# Draw grid points and vertices
 	var grid_point_count := len(grid_points) if show_grid_points else 0
 	var vertex_count := len(vertices) if show_vertices else 0
@@ -322,6 +328,7 @@ func draw() -> void:
 		# Apply transformation
 		edge_multimesh.set_instance_transform(instance, edge_transform)
 		edge_multimesh.set_instance_color(instance, edge_color)
+	print("Draw time: " + str((Time.get_ticks_usec() - start_time) / 1000.0)  + "ms")
 
 
 func get_grid_point(x: int, y: int, z: int) -> Vector4:
