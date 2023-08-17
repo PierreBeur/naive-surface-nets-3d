@@ -36,6 +36,22 @@ const EDGE_INDICES := [
 	[0, 4], [1, 5], [3, 7], [2, 6]
 ]
 
+const HEXAGON_VERTICES := [
+	Vector2(1.0, 0.0),
+	Vector2(0.5, sqrt(3.0) / 2.0),
+	Vector2(-0.5, sqrt(3.0) / 2.0),
+	Vector2(-1.0, 0.0),
+	Vector2(-0.5, -sqrt(3.0) / 2.0),
+	Vector2(0.5, -sqrt(3.0) / 2.0)
+]
+
+const HEXAGON_INDICES := [
+	0, 2, 1,
+	0, 3, 2,
+	0, 5, 3,
+	5, 4, 3
+]
+
 
 # Node paths
 
@@ -251,8 +267,7 @@ func draw() -> void:
 	# Draw grid points and vertices
 	var grid_point_count := len(grid_points) if show_grid_points else 0
 	var vertex_count := len(vertices) if show_vertices else 0
-	multimesh.get_mesh().set_height(grid_point_and_vertex_size)
-	multimesh.get_mesh().set_radius(grid_point_and_vertex_size / 2.0)
+	multimesh.set_mesh(construct_hexagon_mesh(grid_point_and_vertex_size))
 	multimesh.set_instance_count(grid_point_count + vertex_count)
 	# Draw grid points
 	for instance in grid_point_count:
@@ -352,6 +367,23 @@ func get_noise_color_3dv(v: Vector3) -> Color:
 
 func v4_to_v3(v: Vector4) -> Vector3:
 	return Vector3(v.x, v.y, v.z)
+
+
+func construct_hexagon_mesh(size: float) -> ArrayMesh:
+	var radius := size / 2.0
+	var st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for vertex in HEXAGON_VERTICES:
+		st.add_vertex(Vector3(vertex.x, vertex.y, 1.0) * radius)
+	for index in HEXAGON_INDICES:
+		st.add_index(index)
+	var array_mesh := st.commit()
+	var material := StandardMaterial3D.new()
+	material.set_flag(BaseMaterial3D.FLAG_ALBEDO_FROM_VERTEX_COLOR, true)
+	material.set_billboard_mode(BaseMaterial3D.BILLBOARD_ENABLED)
+	array_mesh.surface_set_material(0, material)
+	return array_mesh
+
 
 func toggle_show_normal_buffer():
 	var viewport := get_tree().root.get_viewport_rid()
