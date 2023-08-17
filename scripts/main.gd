@@ -69,9 +69,12 @@ var grid_points := []
 var vertices := []
 var edges := []
 
+var noise := FastNoiseLite.new()
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	noise.set_frequency(1.0)
 	build()
 	draw()
 
@@ -361,7 +364,11 @@ func get_vertex_position_3i(x: int, y: int, z: int) -> Vector3:
 
 func get_noise_3dv(v: Vector3) -> float:
 	# Unit sphere signed distance function
-	return v.length() - 1.0
+	if v[v.max_axis_index()] >= bb_extent - cell_size:
+		return 1.0
+	if v[v.min_axis_index()] <= -bb_extent + cell_size:
+		return 1.0
+	return v.length() - 0.8 + noise.get_noise_3dv(v)
 
 
 func get_noise_color_f(f: float) -> Color:
