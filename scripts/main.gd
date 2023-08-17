@@ -22,6 +22,7 @@ var edge_color := Color.BLUE
 var show_grid_points := true
 var show_vertices := true
 var show_edges := true
+var show_mesh := true
 var interpolation := true
 var show_normal_buffer := false
 
@@ -77,6 +78,7 @@ func _ready() -> void:
 	noise.set_frequency(1.0)
 	build()
 	draw()
+	mesh.visible = show_mesh
 	set_show_normal_buffer(show_normal_buffer)
 
 
