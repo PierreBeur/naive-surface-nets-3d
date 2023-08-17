@@ -13,9 +13,8 @@ var grid_resolution := cell_resolution + 1
 var cell_size := bounding_box_size / grid_resolution
 var cell_offset := cell_size / 2.0
 
-var grid_point_size := cell_size / 5.0
-var vertex_size := cell_size / 5.0
-var edge_width := vertex_size / 2.0
+var grid_point_and_vertex_size := cell_size / 5.0
+var edge_width := grid_point_and_vertex_size / 2.0
 
 var vertex_color := Color.RED
 var edge_color := Color.BLUE
@@ -252,21 +251,21 @@ func draw() -> void:
 	# Draw grid points and vertices
 	var grid_point_count := len(grid_points) if show_grid_points else 0
 	var vertex_count := len(vertices) if show_vertices else 0
+	multimesh.get_mesh().set_height(grid_point_and_vertex_size)
+	multimesh.get_mesh().set_radius(grid_point_and_vertex_size / 2.0)
 	multimesh.set_instance_count(grid_point_count + vertex_count)
 	# Draw grid points
-	var transform := Transform3D().scaled(Vector3.ONE * grid_point_size)
 	for instance in grid_point_count:
 		var grid_point : Vector4 = grid_points[instance]
 		var position := Vector3(grid_point.x, grid_point.y, grid_point.z)
-		multimesh.set_instance_transform(instance, transform.translated(position))
+		multimesh.set_instance_transform(instance, Transform3D().translated(position))
 		var color := get_noise_color_f(grid_point.w)
 		multimesh.set_instance_color(instance, color)
 	# Draw vertices
-	transform = Transform3D().scaled(Vector3.ONE * vertex_size)
 	for instance in range(grid_point_count, grid_point_count + vertex_count):
 		var vertex : Vector4 = vertices[instance - grid_point_count]
 		var position := Vector3(vertex.x, vertex.y, vertex.z)
-		var vertex_transform := transform.translated(position)
+		var vertex_transform := Transform3D().translated(position)
 		# If vertex is hidden, scale by ZERO to hide it
 		if not vertex.w:
 			vertex_transform = Transform3D().scaled(Vector3.ZERO)
@@ -278,7 +277,7 @@ func draw() -> void:
 	var edge_mesh : CylinderMesh = edge_multimesh.get_mesh()
 	edge_mesh.set_top_radius(edge_width / 2.0)
 	edge_mesh.set_bottom_radius(edge_width / 2.0)
-	transform = Transform3D().translated(Vector3.UP * 0.5)
+	var transform = Transform3D().translated(Vector3.UP * 0.5)
 	for instance in edge_count:
 		# Get edge
 		var edge : Array = edges[instance]
