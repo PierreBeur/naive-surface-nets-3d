@@ -75,6 +75,7 @@ var noise := FastNoiseLite.new()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	camera.position.z = bounding_box_size
 	noise.set_frequency(1.0)
 	build()
 	draw()

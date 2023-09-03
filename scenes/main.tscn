@@ -48,5 +48,4 @@ multimesh = SubResource("MultiMesh_ugu1x")
 [node name="CameraOrbitCenter" type="Node3D" parent="Node3D"]
 
 [node name="Camera3D" type="Camera3D" parent="Node3D/CameraOrbitCenter"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
 environment = SubResource("Environment_03t68")
