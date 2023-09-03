@@ -5,11 +5,12 @@ extends Node
 
 var mouse_sensitivity := 0.002
 
-var bounding_box_size := 2.5
+var grid_resolution := 84
+
+var bounding_box_size := float(grid_resolution)
 var bb_extent := bounding_box_size / 2.0
 
-var cell_resolution := 15
-var grid_resolution := cell_resolution + 1
+var cell_resolution := grid_resolution - 1
 var cell_size := bounding_box_size / grid_resolution
 var cell_offset := cell_size / 2.0
 
@@ -27,6 +28,9 @@ var interpolation := true
 var show_normal_buffer := false
 
 var zoom_step := cell_size / 5.0
+
+var noise_scale := 3.0
+var noise_frequency := 1.0
 
 
 # Constants
@@ -76,7 +80,7 @@ var noise := FastNoiseLite.new()
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	camera.position.z = bounding_box_size
-	noise.set_frequency(1.0)
+	noise.set_frequency(noise_scale * noise_frequency / grid_resolution)
 	build()
 	draw()
 	mesh.visible = show_mesh
@@ -372,7 +376,8 @@ func get_noise_3dv(v: Vector3) -> float:
 		return 1.0
 	if v[v.min_axis_index()] <= -bb_extent + cell_size:
 		return 1.0
-	return v.length() - 0.8 + noise.get_noise_3dv(v)
+	var sgr = noise_scale / grid_resolution
+	return v.length() * sgr - 0.8 + noise.get_noise_3dv(v)
 
 
 func get_noise_color_f(f: float) -> Color:
